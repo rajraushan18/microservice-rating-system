@@ -1,0 +1,66 @@
+//this class is to reduce the complexity of the database code.
+//so that in service class only methods will be there and implementation will be here
+//to reduce complexity
+
+package com.project.userservice.Impl;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.project.userservice.entities.User;
+import com.project.userservice.exceptions.ResourceNotFoundException;
+import com.project.userservice.repository.UserRepository;
+import com.project.userservice.services.UserService;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Override
+	public User saveUser(User user) {
+		// generate unique user id
+		String randomUserId = UUID.randomUUID().toString();
+		user.setId(randomUserId);
+		return userRepository.save(user);
+	}
+
+	@Override
+	public List<User> getAllUser() {
+		// TODO Auto-generated method stub
+		return userRepository.findAll();
+	}
+
+	@Override
+	public User getUser(String id) {
+		// TODO Auto-generated method stub
+		
+		return userRepository.findById(id)
+				.orElseThrow(
+						()->new ResourceNotFoundException("User with given id doesn't found!!"));
+		
+		//my code
+//		Optional<User> user = userRepository.findById(id);
+//		if(user.isPresent())
+//			return user;
+//		return null;
+	}
+
+	@Override
+	public void deleteUser(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public User updateUser(User user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

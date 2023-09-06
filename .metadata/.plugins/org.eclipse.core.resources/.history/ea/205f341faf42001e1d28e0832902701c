@@ -1,0 +1,9 @@
+//this class is to reduce the complexity of the database code.
+//so that in service class only methods will be there and implementation will be here
+//to reduce complexity
+
+package com.project.userservice.Impl;
+
+public class UserServiceImpl {
+
+}

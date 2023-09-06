@@ -1,0 +1,5 @@
+package com.project.userservice.exceptions;
+
+public class ResourceNotFoundException {
+
+}

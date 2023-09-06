@@ -1,0 +1,19 @@
+# this is an alternate version of writing the application properties
+
+#server
+server:
+  port: 8081
+ 
+#database 
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/microservices
+    name: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+#Hibernate
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true  

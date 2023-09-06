@@ -1,0 +1,5 @@
+package com.project.hotelservice.exceptions;
+
+public class GlobalExceptionHandler {
+
+}

@@ -1,0 +1,90 @@
+//this class is to reduce the complexity of the database code.
+//so that in service class only methods will be there and implementation will be here
+//to reduce complexity
+
+package com.project.userservice.Impl;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.project.userservice.entities.Hotel;
+import com.project.userservice.entities.Rating;
+import com.project.userservice.entities.User;
+import com.project.userservice.exceptions.ResourceNotFoundException;
+import com.project.userservice.repository.UserRepository;
+import com.project.userservice.services.UserService;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+	@Autowired
+	private UserRepository userRepository;
+	
+	@Autowired
+	private RestTemplate restTemplate;
+	
+	@Override
+	public User saveUser(User user) {
+		// generate unique user id
+		String randomUserId = UUID.randomUUID().toString();
+		user.setId(randomUserId);
+		return userRepository.save(user);
+	}
+
+	@Override
+	public List<User> getAllUser() {
+		// Implement rating option for all users also
+		return userRepository.findAll();
+	}
+
+	@Override
+	public User getUser(String id) {
+		// TODO Auto-generated method stub
+		
+		User user = userRepository.findById(id)
+				.orElseThrow(()->new ResourceNotFoundException("User with given id doesn't found!!"));
+		
+		//fetch all rating of the above user using rating service
+		ArrayList<Rating> ratingsOfUser = restTemplate.getForObject("http://localhost:8083/rating/users/"+user.getId(), ArrayList.class);
+		user.setRatings(ratingsOfUser);
+		
+		//fetch the hotels from the ratings we get above
+		List<Rating> ratingList = ratingsOfUser.stream().map(rating -> {
+			//api call to hotel service to get the hotel
+			ResponseEntity<Hotel> forEntity = restTemplate.getForEntity("http://localhost:8083/hotels/"+rating.getHotelId(), Hotel.class);
+			//can also be used getForObject to get direct hotel details
+			//getForEntity will provide more details
+			Hotel hotel = forEntity.getBody();
+			
+			//set the hotel to rating
+			rating.setHotel(hotel);
+			
+			//return the rating
+			
+			return rating;
+		}).collect(Collectors.toList());		
+		
+		return user;
+	}
+
+	@Override
+	public void deleteUser(String id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public User updateUser(User user) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

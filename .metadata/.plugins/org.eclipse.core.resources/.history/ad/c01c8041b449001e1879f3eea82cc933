@@ -1,0 +1,5 @@
+package com.project.userservice.external.services;
+
+public interface HotelService {
+
+}
